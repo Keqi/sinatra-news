@@ -3,7 +3,7 @@ require 'rack/server'
 
 class HelloWorld
   def response
-    [200, {}, 'Hello World']
+    [200, {}, ['Hello World']]
   end
 end
 
