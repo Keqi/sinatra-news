@@ -1,16 +1,17 @@
-require 'rack'
-require 'rack/server'
-
-class HelloWorld
-  def response
-    [200, {}, ['Hello World']]
-  end
-end
+require 'sinatra'
+require 'json'
 
 module PilotNews
-  class Application
-    def self.call(env)
-      HelloWorld.new.response
+  class Application < Sinatra::Base
+    get '/stories' do
+      [
+        { title: "Example 1", url: "http://lipsum.com" },
+        { title: "Example 2", url: "http://lipsum.uk" }
+      ].to_json
+    end
+
+    get '/stories/:id' do
+      { title: "Example 1", url: "http://lipsum.com" }.to_json
     end
   end
 end
