@@ -7,8 +7,10 @@ class HelloWorld
   end
 end
 
-class HelloWorldApp
-  def self.call(env)
-    HelloWorld.new.response
+module PilotNews
+  class Application
+    def self.call(env)
+      HelloWorld.new.response
+    end
   end
 end

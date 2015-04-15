@@ -1,4 +1,4 @@
-require_relative '../lib/hello_world'
+require_relative '../lib/application'
 require 'rack/test'
 
 RSpec.configure do |config|

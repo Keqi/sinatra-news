@@ -1,3 +1,3 @@
-require_relative 'lib/hello_world'
+require_relative 'lib/application'
 
-Rack::Server.start :app => HelloWorldApp
+Rack::Server.start :app => PilotNews::Application
