@@ -5,7 +5,7 @@ RSpec.describe PilotNews::Application do
   let(:app) { Rack::Lint.new(PilotNews::Application) }
 
   describe "API" do
-    # let!(:story) { Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com') }
+    let!(:story) { Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com') }
 
     describe "GET /stories" do
       it "returns list of all submitted stories" do
