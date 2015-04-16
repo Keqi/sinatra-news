@@ -1,4 +1,3 @@
-require 'active_record'
 require 'rspec/core/rake_task'
 
 task default: :spec

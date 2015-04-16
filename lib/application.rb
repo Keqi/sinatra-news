@@ -1,3 +1,4 @@
+require 'active_record'
 require 'sinatra'
 require 'json'
 require 'dotenv'
@@ -18,6 +19,15 @@ module PilotNews
 
     get '/stories/:id' do
       Story.find(params[:id]).to_json
+    end
+
+    put '/story' do
+      Story.create!(params[:story])
+      status 201
+    end
+
+    post '/story/:id' do
+      Story.find(params[:id]).update_attributes(params[:story])
     end
   end
 end

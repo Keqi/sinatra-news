@@ -38,7 +38,7 @@ RSpec.describe PilotNews::Application do
 
     describe "PUT /story" do
       it "creates new story in database" do
-        put "/story", { title: "New story", url: "http://example.com" }
+        put "/story", { story: { title: "New story", url: "http://example.com" } }
 
         story = Story.last
         expect(Story.count).to eq(2)
@@ -51,7 +51,7 @@ RSpec.describe PilotNews::Application do
 
     describe "POST /story/:id"  do
       it "updates story in database" do
-        post "/story/#{story.id}", { title: "New title" }
+        post "/story/#{story.id}", { story: { title: "New title" } }
 
         expect(last_response.status).to eq(200)
         expect(story.reload.title).to eq("New title")
