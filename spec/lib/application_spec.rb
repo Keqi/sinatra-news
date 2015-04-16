@@ -9,7 +9,7 @@ RSpec.describe PilotNews::Application do
 
     describe "GET /stories" do
       it "returns list of all submitted stories" do
-        # Story.create!(title: 'ipsum lorem', url: 'http://www.lipsum.uk')
+        Story.create!(title: 'ipsum lorem', url: 'http://www.lipsum.uk')
 
         get '/stories'
         body = JSON.parse(last_response.body)
@@ -21,22 +21,22 @@ RSpec.describe PilotNews::Application do
 
     describe "GET /stories/:id" do
       it "returns single story by given id" do
-        get "/stories/1"
+        get "/stories/#{story.id}"
         parsed_response = JSON.parse(last_response.body)
 
         expect(last_response.ok?).to eq(true)
-        expect(parsed_response["title"]).to eq('Example 1')
-        expect(parsed_response["url"]).to eq("http://lipsum.com")
+        expect(parsed_response["title"]).to eq('Lorem ipsum')
+        expect(parsed_response["url"]).to eq("http://www.lipsum.com")
       end
 
-      it "returns 404 if story wasn't found", pending: true do
+      it "returns 404 if story wasn't found" do
         get "/story/987654321"
 
         expect(last_response.status).to eq(404)
       end
     end
 
-    describe "PUT /story", pending: true do
+    describe "PUT /story" do
       it "creates new story in database" do
         put "/story", { title: "New story", url: "http://example.com" }
 
@@ -49,7 +49,7 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /story/:id", pending: true do
+    describe "POST /story/:id"  do
       it "updates story in database" do
         post "/story/#{story.id}", { title: "New title" }
 
@@ -64,7 +64,7 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /story/:id/vote", pending: true do
+    describe "POST /story/:id/vote"  do
       it "upvotes story" do
         post "/story/#{story.id}/vote"
 
@@ -79,7 +79,7 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /story/:id/downvote", pending: true do
+    describe "POST /story/:id/downvote"  do
       it "downvotes story" do
         post "/story/#{story.id}/downvote"
 
@@ -94,7 +94,7 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "DELETE /story/:id/vote/:vote_id", pending: true do
+    describe "DELETE /story/:id/vote/:vote_id"  do
       let!(:vote) { Vote.create!(story: story) }
 
       it "destroys vote object" do
@@ -117,7 +117,7 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /users", pending: true do
+    describe "POST /users"  do
       it "creates new user" do
         post '/users', { username: 'maciorn', password: 'secret' }
 

@@ -1,17 +1,23 @@
 require 'sinatra'
 require 'json'
+require 'dotenv'
+require_relative 'models/story'
 
 module PilotNews
   class Application < Sinatra::Base
+    configure do
+      Dotenv.load(".env.#{environment}", '.env')
+      ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+
+      use ActiveRecord::ConnectionAdapters::ConnectionManagement
+    end
+
     get '/stories' do
-      [
-        { title: "Example 1", url: "http://lipsum.com" },
-        { title: "Example 2", url: "http://lipsum.uk" }
-      ].to_json
+      Story.all.to_json
     end
 
     get '/stories/:id' do
-      { title: "Example 1", url: "http://lipsum.com" }.to_json
+      Story.find(params[:id]).to_json
     end
   end
 end

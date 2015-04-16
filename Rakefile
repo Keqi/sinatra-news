@@ -1,6 +1,11 @@
-require 'dotenv'
 require 'active_record'
 require 'rspec/core/rake_task'
+
+task default: :spec
+
+RSpec::Core::RakeTask.new(:spec) do |task|
+  task.verbose = false
+end
 
 namespace :db do
   desc 'Migrate the database.'
@@ -21,6 +26,6 @@ namespace :db do
   end
 
   task :environment do
-    Dotenv.load(".env")
+    Dotenv.load(".env.#{ENV['ENV']}", '.env')
   end
 end
