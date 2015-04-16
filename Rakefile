@@ -1,3 +1,4 @@
+require_relative 'lib/application'
 require 'rspec/core/rake_task'
 
 task default: :spec
@@ -25,6 +26,6 @@ namespace :db do
   end
 
   task :environment do
-    Dotenv.load(".env.#{ENV['ENV']}", '.env')
+    ENV["ENV"] == "test" ? Dotenv.load(".env.test") : Dotenv.load
   end
 end

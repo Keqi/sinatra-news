@@ -38,6 +38,8 @@ RSpec.describe PilotNews::Application do
 
     describe "PUT /story" do
       it "creates new story in database" do
+        User.create!(username: 'maciorn', password: 'secret')
+        authorize 'maciorn', 'secret'
         put "/story", { story: { title: "New story", url: "http://example.com" } }
 
         story = Story.last
@@ -45,7 +47,20 @@ RSpec.describe PilotNews::Application do
         expect(story.title).to eq("New story")
         expect(story.url).to eq("http://example.com")
 
+        expect(story.user.username).to eq('maciorn')
+        expect(story.user.password).to eq('secret')
+
         expect(last_response.status).to eq(201)
+      end
+
+      it "returns 401 with unathorized HEADER if user not found" do
+        User.create!(username: 'maciorn', password: 'secret')
+        authorize 'maciorn', 'secret1'
+        put "/story", { story: { title: "New story", url: "http://example.com" } }
+
+        expect(last_response.status).to eq(401)
+        expect(last_response.headers["WWW-Authenticate"]).to eq("Restricted Area")
+        expect(Story.count).to eq(1)
       end
     end
 
@@ -117,9 +132,9 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /users"  do
+    describe "PUT /users"  do
       it "creates new user" do
-        post '/users', { username: 'maciorn', password: 'secret' }
+        put '/users', { username: 'maciorn', password: 'secret' }
 
         expect(last_response.status).to eq(201)
         expect(User.count).to eq(1)
