@@ -5,7 +5,8 @@ RSpec.describe PilotNews::Application do
   let(:app) { Rack::Lint.new(PilotNews::Application) }
 
   describe "API" do
-    let!(:story) { Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com') }
+    let!(:user)  { User.create!(username: 'maciorn', password: 'secret') }
+    let!(:story) { Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com', user: user) }
 
     describe "GET /stories" do
       it "returns list of all submitted stories" do
@@ -38,8 +39,7 @@ RSpec.describe PilotNews::Application do
 
     describe "PUT /story" do
       it "creates new story in database" do
-        User.create!(username: 'maciorn', password: 'secret')
-        authorize 'maciorn', 'secret'
+        authorize user.username, user.password
         put "/story", { story: { title: "New story", url: "http://example.com" } }
 
         story = Story.last
@@ -79,12 +79,28 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /story/:id/vote"  do
+    describe "POST /stories/:id/vote"  do
       it "upvotes story" do
-        post "/story/#{story.id}/vote"
+        authorize user.username, user.password
 
-        expect(last_response.status).to eq(200)
+        post "/stories/#{story.id}/vote"
+        vote = Vote.last
+
+        expect(last_response.status).to eq(201)
+        expect(vote.user).to eq(user)
+        expect(vote.story).to eq(story)
+        expect(vote.value).to eq(1)
+      end
+
+      it "doesnt let user to upvote same story twice" do
+        Vote.create!(user: user, story: story)
+
+        authorize user.username, user.password
+
+        post "/stories/#{story.id}/vote"
+
         expect(Vote.count).to eq(1)
+        expect(last_response.status).to eq(201)
       end
 
       it "returns 404 if story not found" do
@@ -96,10 +112,26 @@ RSpec.describe PilotNews::Application do
 
     describe "POST /story/:id/downvote"  do
       it "downvotes story" do
-        post "/story/#{story.id}/downvote"
+        authorize user.username, user.password
 
-        expect(last_response.status).to eq(200)
+        post "/stories/#{story.id}/downvote"
+        vote = Vote.last
+
+        expect(last_response.status).to eq(201)
+        expect(vote.user).to eq(user)
+        expect(vote.story).to eq(story)
+        expect(vote.value).to eq(-1)
+      end
+
+      it "doesnt let user to upvote same story twice" do
+        Vote.create!(user: user, story: story)
+
+        authorize user.username, user.password
+
+        post "/stories/#{story.id}/downvote"
+
         expect(Vote.count).to eq(1)
+        expect(last_response.status).to eq(201)
       end
 
       it "returns 404 if story not found" do

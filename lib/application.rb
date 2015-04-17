@@ -4,6 +4,7 @@ require 'json'
 require 'dotenv'
 require_relative 'models/story'
 require_relative 'models/user'
+require_relative 'models/vote'
 
 module PilotNews
   class Application < Sinatra::Base
@@ -50,6 +51,30 @@ module PilotNews
 
     put '/users' do
       status 201 if User.create!(params[:user])
+    end
+
+    post '/stories/:id/vote' do
+      protected!
+      story = Story.find(params[:id])
+      vote = Vote.where(story: story, user: @user).first
+      if vote
+        vote.update_attribute("value", 1)
+      else
+        Vote.create!(user: @user, story: story, value: 1)
+      end
+      status 201
+    end
+
+    post '/stories/:id/downvote' do
+      protected!
+      story = Story.find(params[:id])
+      vote = Vote.where(story: story, user: @user).first
+      if vote
+        vote.update_attribute("value", -1)
+      else
+        Vote.create!(user: @user, story: story, value: -1)
+      end
+      status 201
     end
   end
 end
