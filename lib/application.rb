@@ -76,5 +76,16 @@ module PilotNews
       end
       status 201
     end
+
+    delete '/votes/:vote_id' do
+      protected!
+      vote = Vote.find(params[:vote_id])
+      if vote.user.id == @user.id
+        vote.destroy!
+        status 200
+      else 
+        status 401
+      end
+    end
   end
 end

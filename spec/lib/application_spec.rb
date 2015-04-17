@@ -141,26 +141,29 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "DELETE /story/:id/vote/:vote_id"  do
-      let!(:vote) { Vote.create!(story: story) }
+    describe "DELETE votes/:vote_id"  do
+      let!(:vote) { Vote.create!(user: user, story: story) }
 
       it "destroys vote object" do
-        delete "/story/#{story.id}/vote/#{vote.id}"
+        authorize user.username, user.password
+        delete "/votes/#{vote.id}"
 
         expect(last_response.status).to eq(200)
         expect(Vote.count).to eq(0)
       end
 
-      it "returns 404 if story not found" do
-        delete "/story/987654321/vote/#{vote.id}"
+      it "returns 404 if vote not found" do
+        authorize user.username, user.password
+        delete "/votes/987654321"
 
         expect(last_response.status).to eq(404)
       end
 
-      it "returns 404 if vote not found" do
-        delete "/story/#{story.id}/vote/987654321"
+      it "returns 401 if user wasn't authorized" do
+        authorize "fake_user", user.password
+        delete "/votes/#{vote.id}"
 
-        expect(last_response.status).to eq(404)
+        expect(last_response.status).to eq(401)
       end
     end
 
