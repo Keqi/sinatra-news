@@ -37,10 +37,10 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "PUT /story" do
+    describe "PUT /stories" do
       it "creates new story in database" do
         authorize user.username, user.password
-        put "/story", { story: { title: "New story", url: "http://example.com" } }
+        put "/stories", { story: { title: "New story", url: "http://example.com" } }
 
         story = Story.last
         expect(Story.count).to eq(2)
@@ -56,7 +56,7 @@ RSpec.describe PilotNews::Application do
       it "returns 401 with unathorized HEADER if user not found" do
         User.create!(username: 'maciorn', password: 'secret')
         authorize 'maciorn', 'secret1'
-        put "/story", { story: { title: "New story", url: "http://example.com" } }
+        put "/stories", { story: { title: "New story", url: "http://example.com" } }
 
         expect(last_response.status).to eq(401)
         expect(last_response.headers["WWW-Authenticate"]).to eq("Restricted Area")
@@ -64,16 +64,27 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "POST /story/:id"  do
+    describe "POST /stories/:id"  do
       it "updates story in database" do
-        post "/story/#{story.id}", { story: { title: "New title" } }
+        authorize user.username, user.password
+        post "/stories/#{story.id}", { story: { title: "New title" } }
 
         expect(last_response.status).to eq(200)
         expect(story.reload.title).to eq("New title")
       end
 
+      it "returns 401 Unauthorized if story doesnt belong to authorized user" do
+        another_user = User.create!(username: 'newmaciorn', password: 'secret')
+        authorize another_user.username, another_user.password
+
+        post "/stories/#{story.id}", { story: { title: "New title" } }
+
+        expect(last_response.status).to eq(401)
+      end
+
       it "returns 404 if story not found" do
-        post "/story/987654321", { title: "New title" }
+        authorize user.username, user.password
+        post "/stories/987654321", { story: { title: "New title" } }
 
         expect(last_response.status).to eq(404)
       end
@@ -104,13 +115,14 @@ RSpec.describe PilotNews::Application do
       end
 
       it "returns 404 if story not found" do
-        post "/story/987654321/vote"
+        authorize user.username, user.password
+        post "/stories/987654321/vote"
 
         expect(last_response.status).to eq(404)
       end
     end
 
-    describe "POST /story/:id/downvote"  do
+    describe "POST /stories/:id/downvote"  do
       it "downvotes story" do
         authorize user.username, user.password
 
@@ -135,7 +147,8 @@ RSpec.describe PilotNews::Application do
       end
 
       it "returns 404 if story not found" do
-        post "/story/987654321/downvote"
+        authorize user.username, user.password
+        post "/stories/987654321/downvote"
 
         expect(last_response.status).to eq(404)
       end
@@ -169,10 +182,10 @@ RSpec.describe PilotNews::Application do
 
     describe "PUT /users"  do
       it "creates new user" do
-        put '/users', { username: 'maciorn', password: 'secret' }
+        put '/users', { user: { username: 'maciorn', password: 'secret' } }
 
         expect(last_response.status).to eq(201)
-        expect(User.count).to eq(1)
+        expect(User.count).to eq(2)
       end
     end
   end
