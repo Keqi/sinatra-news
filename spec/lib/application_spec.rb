@@ -8,6 +8,15 @@ RSpec.describe PilotNews::Application do
     let!(:user)  { User.create!(username: 'maciorn', password: 'secret') }
     let!(:story) { Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com', user: user) }
 
+    describe "versioning" do
+      it "throws 501 if version is not supported" do
+        get '/v10/stories'
+
+        expect(last_response.status).to eq(501)
+        expect(last_response.body).to eq("Version not supported")
+      end
+    end
+
     describe "GET /v1/stories" do
       it "returns list of all submitted stories" do
         Story.create!(title: 'ipsum lorem', url: 'http://www.lipsum.uk')

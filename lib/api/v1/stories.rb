@@ -3,7 +3,7 @@ module PilotNews
     module V1
       class Stories < Base
 
-        namespace '/v1' do
+        namespace '/v:version' do
           namespace '/stories' do
             get '' do
               respond_with Story.all
