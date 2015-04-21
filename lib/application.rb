@@ -2,6 +2,8 @@ require 'active_record'
 require 'sinatra'
 require 'sinatra/contrib'
 require 'sinatra/router'
+require "dalli"
+require "rack-cache"
 require 'json'
 require 'dotenv'
 require_relative 'api/base'

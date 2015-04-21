@@ -6,6 +6,7 @@ module PilotNews
         namespace '/v:version' do
           namespace '/stories' do
             get '' do
+              cache_control :public, max_age: 60
               respond_with Story.all
             end
 
