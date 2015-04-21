@@ -99,34 +99,6 @@ RSpec.describe PilotNews::Application do
       end
     end
 
-    describe "DELETE /stories/:id" do
-      it "deletes story from db" do
-        authorize user.username, user.password
-        delete "/v2/stories/#{story.id}"
-
-        expect(last_response.status).to eq(201)
-        expect(Story.count).to eq(0)
-        expect(user.stories.count).to eq(0)
-      end
-
-      it "can not delete story if user wasnt authorized" do
-        authorize user.username, "pass"
-        delete "/v2/stories/#{story.id}"
-
-        expect(last_response.status).to eq(401)
-        expect(last_response.body).to eq("Not authorized\n")
-        expect(Story.count).to eq(1)
-      end
-
-      it "API version 1 doesnt include this endpoint" do
-        authorize user.username, user.password
-        delete "/v1/stories/#{story.id}"
-
-        expect(last_response.status).to eq(404)
-        expect(Story.count).to eq(1)
-      end
-    end
-
     describe "POST /stories/:id/vote"  do
       it "upvotes story" do
         authorize user.username, user.password
