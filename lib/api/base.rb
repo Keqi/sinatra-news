@@ -21,7 +21,7 @@ module PilotNews
         halt 404, "Resource not found."
       end
 
-      before %r{/v(\d)} do
+      before %r{/v(\d+)} do
         version = request.fullpath.split("/")[1]
         halt 501, "Version not supported" unless VERSIONS.include?(version)
       end
@@ -36,7 +36,7 @@ module PilotNews
         def authorized?
           @auth ||=  Rack::Auth::Basic::Request.new(request.env)
           @user = User.where(username: @auth.credentials.first, password: @auth.credentials.last).first
-          @auth.provided? and @auth.basic? and @auth.credentials and @user
+          @auth.provided? and @auth.credentials and @user
         end
       end
     end

@@ -10,7 +10,7 @@ RSpec.describe PilotNews::Application do
 
     describe "versioning" do
       it "throws 501 if version is not supported" do
-        get '/v10/stories'
+        get "/v3/stories/#{story.id}"
 
         expect(last_response.status).to eq(501)
         expect(last_response.body).to eq("Version not supported")

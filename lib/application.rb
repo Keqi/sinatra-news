@@ -19,6 +19,7 @@ require_relative 'api/v2/votes'
 require_relative 'models/story'
 require_relative 'models/user'
 require_relative 'models/vote'
+require_relative 'models/board'
 
 module PilotNews
   class Application < Sinatra::Base

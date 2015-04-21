@@ -6,7 +6,11 @@ module PilotNews
         namespace '/v2' do
           namespace '/stories' do
             get '' do
-              respond_with Story.all
+              modified_since? ? respond_with(Story.popular) : status(304)
+            end
+
+            get '/recent' do
+              respond_with Story.order("created_at DESC").last(5)
             end
 
             put '' do
@@ -33,12 +37,14 @@ module PilotNews
             post '/:id/vote' do
               protected!
               vote ? vote.update_attribute("value", 1) : Vote.create!(user: user, story: story, value: 1)
+              Board.first.touch
               status 201
             end
 
             post '/:id/downvote' do
               protected!
               vote ? vote.update_attribute("value", -1) : Vote.create!(user: user, story: story, value: -1)
+              Board.first.touch
               status 201
             end
 
@@ -66,6 +72,11 @@ module PilotNews
 
         def user
           @user ||= User.where(username: @auth.credentials.first, password: @auth.credentials.last).first
+        end
+
+        def modified_since?
+          date = DateTime.parse(request.env["HTTP_HTTP_IF_MODIFIED_SINCE"])
+          Board.first.updated_at < date
         end
       end
     end
