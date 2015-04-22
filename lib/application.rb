@@ -6,6 +6,7 @@ require "dalli"
 require "rack-cache"
 require 'json'
 require 'dotenv'
+require 'kaminari/sinatra'
 require_relative 'api/base'
 
 require_relative 'api/v1/stories'

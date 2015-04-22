@@ -24,12 +24,24 @@ RSpec.describe PilotNews::Application do
     end
   end
 
-  describe "GET /stories/recent" do
-    it "returns last 5 recent stories" do
-      6.times { Story.create! }
-      get '/v2/stories/recent'
+  describe "pagination helper" do
+    before { 5.times { Story.create! } }
 
-      expect(JSON.parse(last_response.body).to_json).to eq(Story.order("created_at DESC").last(5).to_json)
+    it "returns first and last page in 'Link' header if page param is not provided" do
+      get '/v2/stories'
+
+      expect(last_response.header["Link"].include?("<http://example.org/v2/stories?page=1>; rel='first'")).to eq(true)
+      expect(last_response.header["Link"].include?("<http://example.org/v2/stories?page=3>; rel='last'")).to eq(true)
+    end
+
+    it "returns next page in 'Link' header if page param is provided and it isnt last page" do
+      get '/v2/stories?page=2'
+      expect(last_response.header["Link"].include?("<http://example.org/v2/stories?page=3>; rel='next'")).to eq(true)
+    end
+
+    it "returns previous page in 'Link' header if page params is provided and it isnt first page" do
+      get '/v2/stories?page=2'
+      expect(last_response.header["Link"].include?("<http://example.org/v2/stories?page=1>; rel='prev'")).to eq(true)
     end
   end
 

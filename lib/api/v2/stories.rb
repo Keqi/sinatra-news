@@ -1,16 +1,26 @@
+require_relative '../../helpers/pagination_helper'
 module PilotNews
   module API
     module V2
       class Stories < Base
+        include PaginationHelper
 
         namespace '/v2' do
           namespace '/stories' do
             get '' do
-              modified_since? ? respond_with(Story.popular) : status(304)
+              if modified_since?
+                headers \
+                  "Link" => link_header
+                respond_with(Story.popular.page(params[:page] || 1))
+              else
+                status(304)
+              end
             end
 
             get '/recent' do
-              respond_with Story.order("created_at DESC").last(5)
+              headers \
+                  "Link" => link_header
+              respond_with Story.order("created_at DESC").page(params[:page] || 1)
             end
 
             put '' do
@@ -75,6 +85,8 @@ module PilotNews
         end
 
         def modified_since?
+          return true unless request.env["HTTP_HTTP_IF_MODIFIED_SINCE"]
+
           date = DateTime.parse(request.env["HTTP_HTTP_IF_MODIFIED_SINCE"])
           Board.first.updated_at < date
         end
