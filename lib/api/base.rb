@@ -14,11 +14,18 @@ module PilotNews
 
         respond_to :json, :xml
 
+        set :raise_errors, true
+        set :show_exceptions, :after_handler
+
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
       end
 
-      error ActiveRecord::RecordNotFound do
-        halt 404, "Resource not found."
+      error ActiveRecord::RecordNotFound do |e|
+        halt 404, e.to_s
+      end
+
+      error ActiveRecord::RecordInvalid do |e|
+        halt 422, e.to_s
       end
 
       before %r{/v(\d+)} do

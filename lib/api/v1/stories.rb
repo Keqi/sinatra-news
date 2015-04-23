@@ -27,7 +27,7 @@ module PilotNews
 
             post '/:id' do
               protected!
-              story.user == user ? story.update_attributes(params[:story]) : halt(401, "Not authorized\n")
+              story.user == user ? story.update_attributes!(params[:story]) : halt(401, "Not authorized\n")
             end
 
             post '/:id/vote' do

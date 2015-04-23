@@ -3,4 +3,6 @@ class User < ActiveRecord::Base
 
   has_many :stories
   has_many :votes
+
+  validates :username, :password, presence: true
 end

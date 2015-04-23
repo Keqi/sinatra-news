@@ -7,6 +7,8 @@ class Story < ActiveRecord::Base
   belongs_to :board
   has_many :votes
 
+  validates :title, :url, presence: true
+
   def self.popular
     joins(:votes).select("stories.*, sum(value) as rank")
                  .group("stories.title, stories.url, stories.id")

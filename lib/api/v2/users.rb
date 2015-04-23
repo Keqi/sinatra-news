@@ -4,7 +4,10 @@ module PilotNews
       class Users < Base
         namespace '/v2' do
           put '/users' do
-            status 201 if User.create!(params[:user])
+            if user = User.create!(params[:user])
+              status 201
+              respond_with user
+            end
           end
         end
       end

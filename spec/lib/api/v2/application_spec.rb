@@ -25,7 +25,7 @@ RSpec.describe PilotNews::Application do
   end
 
   describe "pagination helper" do
-    before { 5.times { Story.create! } }
+    before { 5.times { Story.create!(title: "title", url: "url") } }
 
     it "returns first and last page in 'Link' header if page param is not provided" do
       get '/v2/stories'
