@@ -1,0 +1,17 @@
+en:
+  activerecord:
+    errors:
+      models:
+        story:
+          attributes:
+            title:
+              blank: "can't be blank"
+            url:
+              blank: "can't be blank"
+        user:
+          attributes:
+            username:
+             blank: "can't be blank"
+            password:
+              blank: "can't be blank"
+              too_short: "must have at least 6 characters"

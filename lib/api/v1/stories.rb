@@ -2,7 +2,6 @@ module PilotNews
   module API
     module V1
       class Stories < Base
-
         namespace '/v1' do
           namespace '/stories' do
             get '' do

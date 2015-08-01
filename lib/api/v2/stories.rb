@@ -4,7 +4,6 @@ module PilotNews
     module V2
       class Stories < Base
         include PaginationHelper
-
         namespace '/v2' do
           namespace '/stories' do
             get '' do
@@ -18,6 +17,7 @@ module PilotNews
             end
 
             get '/recent' do
+              cache_control max_age: 20, public: true
               headers \
                   "Link" => link_header
               respond_with Story.order("created_at DESC").page(params[:page] || 1)

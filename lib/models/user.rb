@@ -5,4 +5,5 @@ class User < ActiveRecord::Base
   has_many :votes
 
   validates :username, :password, presence: true
+  validates :password, length: { minimum: 6 }
 end

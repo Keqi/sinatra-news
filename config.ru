@@ -1,10 +1,8 @@
 require_relative 'lib/application'
 
-if memcache_servers = "localhost"
-  use Rack::Cache,
-    verbose: true,
-    metastore:   "memcached://#{memcache_servers}",
-    entitystore: "memcached://#{memcache_servers}"
-end
+use Rack::Cache,
+      :verbose => true,
+      :metastore   => "memcached://localhost:11211/meta",
+      :entitystore => "memcached://localhost:11211/body"
 
 run PilotNews::Application

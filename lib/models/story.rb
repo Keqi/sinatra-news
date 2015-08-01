@@ -1,7 +1,7 @@
 class Story < ActiveRecord::Base
   self.table_name = "stories"
 
-  paginates_per 2
+  paginates_per 10
 
   belongs_to :user, dependent: :destroy
   belongs_to :board

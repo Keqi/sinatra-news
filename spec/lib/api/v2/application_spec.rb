@@ -24,6 +24,26 @@ RSpec.describe PilotNews::Application do
     end
   end
 
+  describe "Accept-Language header" do
+    it "returns response in default language if Accept-Language header wasnt passed" do
+      put '/v2/users'
+
+      expect(last_response.body).to include("Password must have at least 6 characters")
+    end
+
+    it "returns response in mostly accepted language" do
+      put '/v2/users', {}, { "HTTP_ACCEPT_LANGUAGE" => "en;q=0.5, pl;q=0.8" }
+
+      expect(last_response.body).to include("Password musi posiadać conajmniej 6 znaków")
+    end
+
+    it "returns 406 if none language is accepted" do
+      put '/v2/users', {}, { "HTTP_ACCEPT_LANGUAGE" => "da;q=0.5, gb;q=0.8" }
+
+      expect(last_response.status).to eq(406)
+    end
+  end
+
   describe "pagination helper" do
     before { 5.times { Story.create!(title: "title", url: "url") } }
 

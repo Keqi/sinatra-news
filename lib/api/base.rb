@@ -2,6 +2,7 @@ module PilotNews
   module API
     class Base < Sinatra::Base
       VERSIONS = ["v1", "v2"]
+      ACCEPTED_LANGUAGES = ["en", "pl"]
 
       configure do
         Dotenv.load(".env.#{environment}", '.env')
@@ -9,10 +10,19 @@ module PilotNews
 
         register Sinatra::Namespace
         register Sinatra::RespondWith
+        register Sinatra::CrossOrigin
 
-        helpers  Sinatra::JSON
+        use(Rack::Accept) { |context| context.languages = ACCEPTED_LANGUAGES }
+
+        I18n.load_path = Dir[File.join(Dir.getwd, "locales", "*.yml")]
+        I18n.backend.load_translations
+        I18n.default_locale = :en
+
+        helpers Sinatra::JSON
 
         respond_to :json, :xml
+
+        enable :cross_origin
 
         set :raise_errors, true
         set :show_exceptions, :after_handler
@@ -25,12 +35,19 @@ module PilotNews
       end
 
       error ActiveRecord::RecordInvalid do |e|
-        halt 422, e.to_s
+        halt 422, e.record.errors.full_messages.join(", ")
+      end
+
+      before do
+        if request.env["HTTP_ACCEPT_LANGUAGE"]
+          accept = Rack::Accept::Language.new(request.env['HTTP_ACCEPT_LANGUAGE'])
+          I18n.locale = accept.best_of(ACCEPTED_LANGUAGES)
+        end
       end
 
       before %r{/v(\d+)} do
         version = request.fullpath.split("/")[1]
-        halt 501, "Version not supported" unless VERSIONS.include?(version)
+        halt 404, "Version not supported" unless VERSIONS.include?(version)
       end
 
       helpers do

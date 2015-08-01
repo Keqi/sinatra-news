@@ -68,7 +68,7 @@ RSpec.describe PilotNews::Application do
         put "/v1/stories", { story: { } }
 
         expect(last_response.status).to eq(422)
-        expect(last_response.body).to eq("Validation failed: Title can't be blank, Url can't be blank")
+        expect(last_response.body).to eq("Title can't be blank, Url can't be blank")
       end
 
       it "returns 401 with unathorized HEADER if user not found" do
@@ -105,7 +105,7 @@ RSpec.describe PilotNews::Application do
         post "/v1/stories/#{story.id}", { story: { title: nil, url: nil } }
 
         expect(last_response.status).to eq(422)
-        expect(last_response.body).to eq("Validation failed: Title can't be blank, Url can't be blank")
+        expect(last_response.body).to eq("Title can't be blank, Url can't be blank")
       end
 
       it "returns 404 if story not found" do
@@ -218,7 +218,7 @@ RSpec.describe PilotNews::Application do
         put '/v1/users', { user: { password: 'secret' } }
 
         expect(last_response.status).to eq(422)
-        expect(last_response.body).to eq("Validation failed: Username can't be blank")
+        expect(last_response.body).to eq("Username can't be blank")
       end
     end
   end
